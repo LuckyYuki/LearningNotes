@@ -2,8 +2,8 @@
 
 ## Some study notes about FE
 
-### JavaScript Syntax
+### 1. JavaScript Syntax
 
-### Vue Feature
+### 2. Vue Feature
 
-### About Webpack
+### 3. About Webpack
