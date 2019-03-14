@@ -132,6 +132,7 @@ const baz = [...foo].map(bar);
 // good
 const baz = Array.from(foo, bar);
 ```
+
 - 2.3 对于对迭代器的映射，使用 Array.from 替代展开方法 ... ， 因为它避免了创建中间数组。
 
 ```javascript
