@@ -8,6 +8,8 @@
 2. [数组](#arrays)
 3. [解构](#destructuring)
 4. [方法](#functions)
+5. [箭头函数](#arrow-functions)
+6. [类和构造器](#classes--constructors)
 
 ## <a id="objects">对象</a>
 
@@ -123,16 +125,6 @@ const nodes = Array.from(foo);
 
 // best
 const nodes = [...foo];
-```
-
-- 2.3 对于对迭代器的映射，使用 Array.from 替代展开方法 ... ， 因为它避免了创建中间数组。
-
-```javascript
-// bad
-const baz = [...foo].map(bar);
-
-// good
-const baz = Array.from(foo, bar);
 ```
 
 - 2.3 对于对迭代器的映射，使用 Array.from 替代展开方法 ... ， 因为它避免了创建中间数组。
@@ -334,15 +326,110 @@ function handleThings(name, opts = {}) {
 }
 ```
 
+- 4.7 没用变异参数。
+
+> 为什么? 将传入的对象作为参数进行操作可能会在原始调用程序中造成不必要的变量副作用。
+
+```javascript
+// bad
+function f1(obj) {
+  obj.key = 1;
+}
+
+// good
+function f2(obj) {
+  const key = Object.prototype.hasOwnProperty.call(obj, 'key') ? obj.key : 1;
+}
+```
+
+- 4.8 不要再赋值参数。
+
+> 为什么? 重新赋值参数会导致意外的行为，尤其是在访问 `arguments` 对象的时候。 它还可能导致性能优化问题，尤其是在 V8 中。
+
+```javascript
+// bad
+function f1(a) {
+  a = 1;
+  // ...
+}
+
+function f2(a) {
+  if (!a) { a = 1; }
+  // ...
+}
+
+// good
+function f3(a) {
+  const b = a || 1;
+  // ...
+}
+
+function f4(a = 1) {
+  // ...
+}
+```
+- 4.9 优先使用扩展运算符 ... 来调用可变参数函数。
+
+> 为什么? 它更加干净，你不需要提供上下文，并且你不能轻易的使用 `apply` 来 `new` 。
+
+```javascript
+// bad
+const x = [1, 2, 3, 4, 5];
+console.log.apply(console, x);
+
+// good
+const x = [1, 2, 3, 4, 5];
+console.log(...x);
+
+// bad
+new (Function.prototype.bind.apply(Date, [null, 2016, 8, 5]));
+
+// good
+new Date(...[2016, 8, 5]);
+```
+
+**[⬆ 返回目录](#table-of-contents)**
+
+## <a id="arrow-functions">箭头函数</a>
+
+- 5.1 避免箭头函数符号 (=>) 和比较运算符 (<=, >=) 的混淆。
+
+```javascript
+// bad
+const itemHeight = item => item.height > 256 ? item.largeSize : item.smallSize;
+
+// bad
+const itemHeight = (item) => item.height > 256 ? item.largeSize : item.smallSize;
+
+// good
+const itemHeight = item => (item.height > 256 ? item.largeSize : item.smallSize);
+
+// good
+const itemHeight = (item) => {
+  const { height, largeSize, smallSize } = item;
+  return height > 256 ? largeSize : smallSize;
+};
+```
+
+**[⬆ 返回目录](#table-of-contents)**
+
+## <a id="classes--constructors">类和构造器</a>
+
+- 6.1 
+
+
+
 **[⬆ 返回目录](#table-of-contents)**
 
 ## <a id="functions">方法</a>
 
 - 4.1 
 
-```javascript
+**[⬆ 返回目录](#table-of-contents)**
 
-```
+## <a id="functions">方法</a>
+
+- 4.1 
 
 **[⬆ 返回目录](#table-of-contents)**
 
@@ -350,9 +437,11 @@ function handleThings(name, opts = {}) {
 
 - 4.1 
 
-```javascript
+**[⬆ 返回目录](#table-of-contents)**
 
-```
+## <a id="functions">方法</a>
+
+- 4.1 
 
 **[⬆ 返回目录](#table-of-contents)**
 
@@ -360,9 +449,11 @@ function handleThings(name, opts = {}) {
 
 - 4.1 
 
-```javascript
+**[⬆ 返回目录](#table-of-contents)**
 
-```
+## <a id="functions">方法</a>
+
+- 4.1 
 
 **[⬆ 返回目录](#table-of-contents)**
 
@@ -370,8 +461,22 @@ function handleThings(name, opts = {}) {
 
 - 4.1 
 
-```javascript
+**[⬆ 返回目录](#table-of-contents)**
 
-```
+## <a id="functions">方法</a>
+
+- 4.1 
+
+**[⬆ 返回目录](#table-of-contents)**
+
+## <a id="functions">方法</a>
+
+- 4.1 
+
+**[⬆ 返回目录](#table-of-contents)**
+
+## <a id="functions">方法</a>
+
+- 4.1 
 
 **[⬆ 返回目录](#table-of-contents)**
