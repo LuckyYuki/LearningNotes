@@ -10,6 +10,7 @@
 4. [方法](#functions)
 5. [箭头函数](#arrow-functions)
 6. [类和构造器](#classes--constructors)
+7. [模块](#modules)
 
 ## <a id="objects">对象</a>
 
@@ -415,15 +416,200 @@ const itemHeight = (item) => {
 
 ## <a id="classes--constructors">类和构造器</a>
 
-- 6.1 
+- 6.1 尽量使用 class. 避免直接操作 prototype .
 
+> 为什么? `class` 语法更简洁，更容易推理。
 
+```javascript
+// bad
+function Queue(contents = []) {
+  this.queue = [...contents];
+}
+Queue.prototype.pop = function () {
+  const value = this.queue[0];
+  this.queue.splice(0, 1);
+  return value;
+};
+
+// good
+class Queue {
+  constructor(contents = []) {
+    this.queue = [...contents];
+  }
+  pop() {
+    const value = this.queue[0];
+    this.queue.splice(0, 1);
+    return value;
+  }
+}
+```
+
+- 6.2 使用 extends 来扩展继承。
+
+> 为什么? 它是一个内置的方法，可以在不破坏 `instanceof` 的情况下继承原型功能。
+
+```javascript
+// 彻底搞懂JS中的prototype、__proto__与constructor（图解）
+
+// bad
+const inherits = require('inherits');
+function PeekableQueue(contents) {
+  Queue.apply(this, contents);
+}
+inherits(PeekableQueue, Queue);
+PeekableQueue.prototype.peek = function () {
+  return this.queue[0];
+};
+
+// good
+class PeekableQueue extends Queue {
+  peek() {
+    return this.queue[0];
+  }
+}
+```
+
+- 6.3 方法返回了 `this` 来供其内部方法调用。
+
+```javascript
+// bad
+Jedi.prototype.jump = function () {
+  this.jumping = true;
+  return true;
+};
+
+Jedi.prototype.setHeight = function (height) {
+  this.height = height;
+};
+
+const luke = new Jedi();
+luke.jump(); // => true
+luke.setHeight(20); // => undefined
+
+// good
+class Jedi {
+  jump() {
+    this.jumping = true;
+    return this;
+  }
+
+  setHeight(height) {
+    this.height = height;
+    return this;
+  }
+}
+
+const luke = new Jedi();
+
+luke.jump()
+  .setHeight(20);
+```
+
+- 6.4 只要在确保能正常工作并且不产生任何副作用的情况下，编写一个自定义的 toString() 方法也是可以的。
+
+```javascript
+class Jedi {
+  constructor(options = {}) {
+    this.name = options.name || 'no name';
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  toString() {
+    return `Jedi - ${this.getName()}`;
+  }
+}
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="modules">模块</a>
 
-- 4.1 
+- 7.1 你可能经常使用模块 (import/export) 在一些非标准模块的系统上。 你也可以在你喜欢的模块系统上相互转换。
+
+> 为什么? 模块是未来的趋势，让我们拥抱未来。
+
+```javascript
+// bad
+const AirbnbStyleGuide = require('./AirbnbStyleGuide');
+module.exports = AirbnbStyleGuide.es6;
+
+// ok
+import AirbnbStyleGuide from './AirbnbStyleGuide';
+export default AirbnbStyleGuide.es6;
+
+// best
+import { es6 } from './AirbnbStyleGuide';
+export default es6;
+```
+
+- 7.2 只从一个路径导入所有需要的东西。
+
+> 为什么? 从同一个路径导入多个行，使代码更难以维护。
+
+```javascript
+// bad
+import foo from 'foo';
+// … 其他导入 … //
+import { named1, named2 } from 'foo';
+
+// good
+import foo, { named1, named2 } from 'foo';
+
+// good
+import foo, {
+  named1,
+  named2,
+} from 'foo';
+```
+
+- 7.3 不要导出可变的引用。
+
+> 为什么? 在一般情况下，应该避免发生突变，但是在导出可变引用时及其容易发生突变。虽然在某些特殊情况下，可能需要这样，但是一般情况下只需要导出常量引用。
+
+```javascript
+// bad
+let foo = 3;
+export { foo };
+
+// good
+const foo = 3;
+export { foo };
+```
+
+- 7.4 在单个导出的模块中，选择默认模块而不是指定的导出。
+
+> 为什么? 为了鼓励更多的文件只导出一件东西，这样可读性和可维护性更好。
+
+```javascript
+// bad
+export function foo() {}
+
+// good
+export default function foo() {}
+```
+
+- 7.5 将所有的 imports 语句放在所有非导入语句的上边。
+
+> 为什么? 由于所有的 `import` 都被提前，保持他们在顶部是为了防止意外发生。
+
+```javascript
+// bad
+import foo from 'foo';
+foo.init();
+
+import bar from 'bar';
+
+// good
+import foo from 'foo';
+import bar from 'bar';
+
+foo.init();
+```
+
+
 
 **[⬆ 返回目录](#table-of-contents)**
 
