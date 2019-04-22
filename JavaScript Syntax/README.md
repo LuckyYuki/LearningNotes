@@ -13,6 +13,27 @@
 7. [模块](#modules)
 8. [迭代器和发生器](#iterators-and-generators)
 9. [属性](#properties)
+10. [提升](#hoisting)
+11. [比较运算符和等号](#comparison-operators--equality)
+12. [控制语句](#control-statements)
+  1. [注释](#comments)
+  2. [空白](#whitespace)
+  3. [逗号](#commas)
+  4. [分号](#semicolons)
+  5. [类型转换和强制类型转换](#type-casting--coercion)
+  6. [命名规范](#naming-conventions)
+  7. [存取器](#accessors)
+  8. [事件](#events)
+  9. [jQuery](#jquery)
+  10. [ECMAScript 5 兼容性](#ecmascript-5-compatibility)
+  11. [ECMAScript 6+ (ES 2015+) 风格](#ecmascript-6-es-2015-styles)
+  12. [标准库](#standard-library)
+  13. [测试](#testing)
+  14. [性能](#performance)
+  15. [资源](#resources)
+  16. [JavaScript风格指南的指南](#the-javascript-style-guide-guide)
+  17. [许可证](#license)
+  18. [修正案](#amendments)
 
 ## <a id="objects">对象</a>
 
@@ -702,25 +723,301 @@ const binary = Math.pow(2, 10);
 const binary = 2 ** 10;
 ```
 
+**[⬆ 返回目录](#table-of-contents)**
 
+## <a id="hoisting">提升</a>
+
+- 10.1 var 定义的变量会被提升到函数范围的最顶部，但是它的赋值不会。const 和 let 声明的变量受到一个称之为 Temporal Dead Zones (TDZ) 的新概念保护。 知道为什么 typeof 不再安全 是很重要的。
+
+```javascript
+// 我们知道这个行不通 (假设没有未定义的全局变量)
+function example() {
+  console.log(notDefined); // => throws a ReferenceError
+}
+
+// 在引用变量后创建变量声明将会因变量提升而起作用。
+// 注意: 真正的值 `true` 不会被提升。
+function example() {
+  console.log(declaredButNotAssigned); // => undefined
+  var declaredButNotAssigned = true;
+}
+
+// 解释器将变量提升到函数的顶部
+// 这意味着我们可以将上边的例子重写为：
+function example() {
+  let declaredButNotAssigned;
+  console.log(declaredButNotAssigned); // => undefined
+  declaredButNotAssigned = true;
+}
+
+// 使用 const 和 let
+function example() {
+  console.log(declaredButNotAssigned); // => throws a ReferenceError
+  console.log(typeof declaredButNotAssigned); // => throws a ReferenceError
+  const declaredButNotAssigned = true;
+}
+```
+
+- 10.2 匿名函数表达式提升变量名，而不是函数赋值。
+
+```javascript
+function example() {
+  console.log(anonymous); // => undefined
+
+  anonymous(); // => TypeError anonymous is not a function
+
+  var anonymous = function () {
+    console.log('anonymous function expression');
+  };
+}
+```
+
+- 10.3 命名函数表达式提升的是变量名，而不是函数名或者函数体。
+
+```javascript
+function example() {
+  console.log(named); // => undefined
+
+  named(); // => TypeError named is not a function
+
+  superPower(); // => ReferenceError superPower is not defined
+
+  var named = function superPower() {
+    console.log('Flying');
+  };
+}
+
+// 当函数名和变量名相同时也是如此。
+function example() {
+  console.log(named); // => undefined
+
+  named(); // => TypeError named is not a function
+
+  var named = function named() {
+    console.log('named');
+  };
+}
+```
+
+- 10.4 函数声明提升其名称和函数体。
+
+```javascript
+function example() {
+  superPower(); // => Flying
+
+  function superPower() {
+    console.log('Flying');
+  }
+}
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="comparison-operators--equality">比较运算符和等号</a>
 
-- 4.1 
+- 11.1 使用 === 和 !== 而不是 == 和 !=。 
+
+- 11.2 条件语句，例如 if 语句使用 ToBoolean 的抽象方法来计算表达式的结果，并始终遵循以下简单的规则：
+  - **Objects** 的取值为： **true**
+  - **Undefined** 的取值为： **false**
+  - **Null** 的取值为： **false**
+  - **Booleans** 的取值为： **布尔值的取值**
+  - **Numbers** 的取值为：如果为 **+0, -0, or NaN** 值为 **false** 否则为 **true**
+  - **Strings** 的取值为: 如果是一个空字符串 `''` 值为 **false** 否则为 **true**
+
+```javascript
+if ([0] && []) {
+  // true
+  // 一个数组（即使是空的）是一个对象，对象的取值为 true
+}
+```
+
+- 11.3 对于布尔值使用简写，但是对于字符串和数字进行显式比较。
+
+```javascript
+// bad
+if (isValid === true) {
+  // ...
+}
+
+// good
+if (isValid) {
+  // ...
+}
+
+// bad
+if (name) {
+  // ...
+}
+
+// good
+if (name !== '') {
+  // ...
+}
+
+// bad
+if (collection.length) {
+  // ...
+}
+
+// good
+if (collection.length > 0) {
+  // ...
+}
+```
+
+- 11.4 在 case 和 default 的子句中，如果存在声明 (例如. let, const, function, 和 class)，使用大括号来创建块 。
+
+> 为什么? 语法声明在整个 `switch` 块中都是可见的，但是只有在赋值的时候才会被初始化，这种情况只有在 `case` 条件达到才会发生。 当多个 `case` 语句定义相同的东西是，这会导致问题问题。
+
+```javascript
+// bad
+switch (foo) {
+  case 1:
+    let x = 1;
+    break;
+  case 2:
+    const y = 2;
+    break;
+  case 3:
+    function f() {
+      // ...
+    }
+    break;
+  default:
+    class C {}
+}
+
+// good
+switch (foo) {
+  case 1: {
+    let x = 1;
+    break;
+  }
+  case 2: {
+    const y = 2;
+    break;
+  }
+  case 3: {
+    function f() {
+      // ...
+    }
+    break;
+  }
+  case 4:
+    bar();
+    break;
+  default: {
+    class C {}
+  }
+}
+```
+
+- 11.5 三目表达式不应该嵌套，通常是单行表达式。 
+
+```javascript
+// bad
+const foo = maybe1 > maybe2
+  ? "bar"
+  : value1 > value2 ? "baz" : null;
+
+// 分离为两个三目表达式
+const maybeNull = value1 > value2 ? 'baz' : null;
+
+// better
+const foo = maybe1 > maybe2
+  ? 'bar'
+  : maybeNull;
+
+// best
+const foo = maybe1 > maybe2 ? 'bar' : maybeNull;
+```
+
+- 11.6 避免不必要的三目表达式。
+
+```javascript
+// bad
+const foo = a ? a : b;
+const bar = c ? true : false;
+const baz = c ? false : true;
+
+// good
+const foo = a || b;
+const bar = !!c;
+const baz = !c;
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="control-statements">控制语句</a>
 
-- 4.1 
+- 12.1 如果你的控制语句 (if, while 等) 太长或者超过了一行最大长度的限制，则可以将每个条件（或组）放入一个新的行。 逻辑运算符应该在行的开始。
 
-**[⬆ 返回目录](#table-of-contents)**
+> 为什么? 要求操作符在行的开始保持对齐并遵循类似方法衔接的模式。 这提高了可读性，并且使更复杂的逻辑更容易直观的被理解。
 
-## <a id="functions">方法</a>
+```javascript
+// bad
+if ((foo === 123 || bar === 'abc') && doesItLookGoodWhenItBecomesThatLong() && isThisReallyHappening()) {
+  thing1();
+}
 
-- 4.1 
+// bad
+if (foo === 123 &&
+  bar === 'abc') {
+  thing1();
+}
+
+// bad
+if (foo === 123
+  && bar === 'abc') {
+  thing1();
+}
+
+// bad
+if (
+  foo === 123 &&
+  bar === 'abc'
+) {
+  thing1();
+}
+
+// good
+if (
+  foo === 123
+  && bar === 'abc'
+) {
+  thing1();
+}
+
+// good
+if (
+  (foo === 123 || bar === 'abc')
+  && doesItLookGoodWhenItBecomesThatLong()
+  && isThisReallyHappening()
+) {
+  thing1();
+}
+
+// good
+if (foo === 123 && bar === 'abc') {
+  thing1();
+}
+```
+
+- 12.2 不要使用选择操作符代替控制语句。
+
+```javascript
+// bad
+!isRunning && startRunning();
+
+// FIXME: 两种注释
+// TODO: 两种注释
+
+// good
+if (!isRunning) {
+  startRunning();
+}
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
