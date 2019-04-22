@@ -11,6 +11,8 @@
 5. [箭头函数](#arrow-functions)
 6. [类和构造器](#classes--constructors)
 7. [模块](#modules)
+8. [迭代器和发生器](#iterators-and-generators)
+9. [属性](#properties)
 
 ## <a id="objects">对象</a>
 
@@ -609,19 +611,98 @@ import bar from 'bar';
 foo.init();
 ```
 
+**[⬆ 返回目录](#table-of-contents)**
 
+## <a id="iterators-and-generators">迭代器和发生器</a>
+
+- 8.1 不要使用迭代器。 你应该使用 JavaScript 的高阶函数代替 for-in 或者 for-of。
+
+> 为什么? 这是我们强制的规则。 拥有返回值得纯函数比这个更容易解释。
+
+> 使用 `map()` / `every()` / `filter()` / `find()` / `findIndex()` / `reduce()` / `some()` / ... 遍历数组， 和使用 `Object.keys()` / `Object.values()` / `Object.entries()` 迭代你的对象生成数组。
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+// bad
+let sum = 0;
+for (let num of numbers) {
+  sum += num;
+}
+sum === 15;
+
+// good
+let sum = 0;
+numbers.forEach((num) => {
+  sum += num;
+});
+sum === 15;
+
+// best (use the functional force)
+const sum = numbers.reduce((total, num) => total + num, 0);
+sum === 15;
+
+// bad
+const increasedByOne = [];
+for (let i = 0; i < numbers.length; i++) {
+  increasedByOne.push(numbers[i] + 1);
+}
+
+// good
+const increasedByOne = [];
+numbers.forEach((num) => {
+  increasedByOne.push(num + 1);
+});
+
+// best (keeping it functional)
+const increasedByOne = numbers.map(num => num + 1);
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="properties">属性</a>
 
-- 4.1 
+- 9.1 访问属性时使用点符号。
 
-**[⬆ 返回目录](#table-of-contents)**
+```javascript
+const luke = {
+  jedi: true,
+  age: 28,
+};
 
-## <a id="functions">方法</a>
+// bad
+const isJedi = luke['jedi'];
 
-- 4.1 
+// good
+const isJedi = luke.jedi;
+```
+
+- 9.2 使用变量访问属性时，使用 []表示法。
+
+```javascript
+const luke = {
+  jedi: true,
+  age: 28,
+};
+
+function getProp(prop) {
+  return luke[prop];
+}
+
+const isJedi = getProp('jedi');
+```
+
+- 9.3 计算指数时，可以使用 ** 运算符。 
+
+```javascript
+// bad
+const binary = Math.pow(2, 10);
+
+// good
+const binary = 2 ** 10;
+```
+
+
 
 **[⬆ 返回目录](#table-of-contents)**
 
