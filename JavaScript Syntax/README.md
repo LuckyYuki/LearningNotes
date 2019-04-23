@@ -16,20 +16,9 @@
 10. [提升](#hoisting)
 11. [比较运算符和等号](#comparison-operators--equality)
 12. [控制语句](#control-statements)
-  5. [类型转换和强制类型转换](#type-casting--coercion)
-  6. [命名规范](#naming-conventions)
-  7. [存取器](#accessors)
-  8. [事件](#events)
-  9. [jQuery](#jquery)
-  10. [ECMAScript 5 兼容性](#ecmascript-5-compatibility)
-  11. [ECMAScript 6+ (ES 2015+) 风格](#ecmascript-6-es-2015-styles)
-  12. [标准库](#standard-library)
-  13. [测试](#testing)
-  14. [性能](#performance)
-  15. [资源](#resources)
-  16. [JavaScript风格指南的指南](#the-javascript-style-guide-guide)
-  17. [许可证](#license)
-  18. [修正案](#amendments)
+13. [类型转换和强制类型转换](#type-casting--coercion)
+14. [标准库](#standard-library)
+15. [测试](#testing)
 
 ## <a id="objects">对象</a>
 
@@ -1017,26 +1006,134 @@ if (!isRunning) {
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="type-casting--coercion">类型转换和强制类型转换</a>
 
-- 4.1 
+- 13.1 字符类型：
+
+```javascript
+// => this.reviewScore = 9;
+
+// bad
+const totalScore = new String(this.reviewScore); // typeof totalScore is "object" not "string"
+
+// bad
+const totalScore = this.reviewScore + ''; // invokes this.reviewScore.valueOf()
+
+// bad
+const totalScore = this.reviewScore.toString(); // isn’t guaranteed to return a string
+
+// good
+const totalScore = String(this.reviewScore);
+```
+
+- 13.2 数字类型：使用 Number 进行类型铸造和 parseInt 总是通过一个基数来解析一个字符串。
+
+```javascript
+const inputValue = '4';
+
+// bad
+const val = new Number(inputValue);
+
+// bad
+const val = +inputValue;
+
+// bad
+const val = inputValue >> 0;
+
+// bad
+const val = parseInt(inputValue);
+
+// good
+const val = Number(inputValue);
+
+// good
+const val = parseInt(inputValue, 10);
+```
+
+- 13.3 如果出于某种原因，你正在做一些疯狂的事情，而 parseInt 是你的瓶颈，并且出于 性能问题 需要使用位运算， 请写下注释，说明为什么这样做和你做了什么。
+
+```javascript
+// good
+/**
+  * parseInt 使我的代码变慢。
+  * 位运算将一个字符串转换成数字更快。
+  */
+const val = inputValue >> 0;
+```
+
+- 13.4 注意： 当你使用位运算的时候要小心。 数字总是被以 64-bit 值 的形式表示，但是位运算总是返回一个 32-bit 的整数 (来源)。 对于大于 32 位的整数值，位运算可能会导致意外行为。讨论。 最大的 32 位整数是： 2,147,483,647。
+
+```javascript
+2147483647 >> 0; // => 2147483647
+2147483648 >> 0; // => -2147483648
+2147483649 >> 0; // => -2147483647
+```
+
+- 13.5 布尔类型：
+
+```javascript
+const age = 0;
+
+// bad
+const hasAge = new Boolean(age);
+
+// good
+const hasAge = Boolean(age);
+
+// best
+const hasAge = !!age;
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="standard-library">标准库</a>
 
-- 4.1 
+- 14.1 标准库 包含功能已损坏的实用工具，但因为遗留原因而保留。
+
+- 14.2 使用 Number.isNaN 代替全局的 isNaN
+
+> 为什么? 全局的 `isNaN` 强制非数字转化为数字，对任何强制转化为 NaN 的东西都返回 true。
+
+> 如果需要这种行为，请明确说明。
+
+```javascript
+// bad
+isNaN('1.2'); // false
+isNaN('1.2.3'); // true
+
+// good
+Number.isNaN('1.2.3'); // false
+Number.isNaN(Number('1.2.3')); // true
+```
+
+- 14.3 使用 Number.isFinite 代替全局的 isFinite
+
+> 为什么? 全局的 `isFinite` 强制非数字转化为数字，对任何强制转化为有限数字的东西都返回 true。
+
+> 如果需要这种行为，请明确说明。
+
+```javascript
+// bad
+isFinite('2e3'); // true
+
+// good
+Number.isFinite('2e3'); // false
+Number.isFinite(parseInt('2e3', 10)); // true
+```
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
+## <a id="Testing">测试</a>
 
-- 4.1 
+- 15.1 **没有，但是认真**:
+
+  - 无论你使用那种测试框架，都应该编写测试！
+  - 努力写出许多小的纯函数，并尽量减少发生错误的地方。
+  - 对于静态方法和 mock 要小心----它们会使你的测试更加脆弱。
+  - 我们主要在 Airbnb 上使用 [`mocha`](https://www.npmjs.com/package/mocha) 和 [`jest`](https://www.npmjs.com/package/jest) 。 [`tape`](https://www.npmjs.com/package/tape) 也会用在一些小的独立模块上。
+  - 100%的测试覆盖率是一个很好的目标，即使它并不总是可行的。
+  - 无论何时修复bug，都要编写一个回归测试。在没有回归测试的情况下修复的bug在将来几乎肯定会再次崩溃。
 
 **[⬆ 返回目录](#table-of-contents)**
 
-## <a id="functions">方法</a>
-
-- 4.1 
-
-**[⬆ 返回目录](#table-of-contents)**
+### 完结~ 感谢 Airbnb ~
