@@ -1,4 +1,4 @@
-# JavaScript 代码规范
+# JavaScript 代码规范 (整理完结)
 
 *一种写JavaScript更合理的代码风格。*
 
