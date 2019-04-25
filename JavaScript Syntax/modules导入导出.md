@@ -1,4 +1,4 @@
-# moudle.exports 与 exports，export 与 export default 之间的关系饿区别 
+# moudle.exports 与 exports，export 与 export default 之间的关系的区别 
 
 > 前提，CommonJS模块规范和ES6模块规范完全是两种不同的概念。
 
