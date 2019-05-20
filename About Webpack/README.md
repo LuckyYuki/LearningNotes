@@ -91,4 +91,48 @@ output: {
     - devtool：'eval' 是打包速度最快的配置：执行效率最高，性能最好的打包方式，是使用eval的方式做映射关系，但是针对复杂的代码，提示错误信息可能不全面。
     - 开发环境推荐： cheap-module-eval-source-map
     - 生产环境推荐：cheap-module-source-map
+- 热更新的方式：
+    - scripts："watch": "webpack --watch"
+    - scripts："start": "webpack-dev-server"
+    - scripts："server": "node server.js" : 用node自己写一个webpack-dev-server
+        - 借助 webpack-dev-middleware 监听到我们的代码变化，进而重新打包
+        ```javascript
+            const express = require("express");
+            const webpack = require("webpack");
+            const webpackDevMiddleware = require("webpack-dev-middleware");
+            const config = require("./webpack.config.js");
+            // 在node中直接使用webpack
+            // 在命令行里使用webpack
+            const complier = webpack(config);
 
+            const app = express();
+
+            app.use(
+            webpackDevMiddleware(complier, {
+                // publicPath: config.output.publicPath
+            })
+            );
+
+            app.listen(3000, () => {
+            console.log("server is running");
+            });
+        ```
+- webpack-dev-server： 先安装
+    - 增加配置
+    ```javascript
+    devServer: {
+        // 再哪个目录下启动服务器 
+		contentBase: './dist',
+        // 自动打开浏览器 和 地址
+		open: true,
+		port: 8080, 
+        // 
+		hot: true,
+        // 
+		hotOnly: true,
+        // devServer支持跨域代理，当访问/api 下的请求时 自动转发到http://localhost:3000
+        proxy: {
+            '/api': 'http://localhost:3000'
+        }
+	},
+    ```
