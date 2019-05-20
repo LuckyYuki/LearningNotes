@@ -82,3 +82,13 @@ output: {
     path: path.resolve(__dirname, 'dist')
 }
 ```
+
+- mode: 'development' 开发环境下默认 sourceMap 功能是开启的 关闭是： devtool：'none'，
+    - sourceMap 是一个映射关系，打包后的js文件代码对应源代码的哪行哪行，这样容易排错（告诉哪一行哪一列）。
+    - 打开这种模式： devtool: 'source-map'
+    - 如果配置 inline-source-map 后，会把sourceMap文件直接打包到js文件当中，更多配置及配置项区别（速度）请查阅官网。
+    - 如果再加上个cheap （cheap-inline-source-map）代表 你只要告诉我哪一行出错了就可以，与上面的有区别。还有个区别是 只会将业务代码做映射，而不会将像是loader这种代码做映射。如果需要loader这种代码映射，那就再加个module （cheap-module-inline-source-map）
+    - devtool：'eval' 是打包速度最快的配置：执行效率最高，性能最好的打包方式，是使用eval的方式做映射关系，但是针对复杂的代码，提示错误信息可能不全面。
+    - 开发环境推荐： cheap-module-eval-source-map
+    - 生产环境推荐：cheap-module-source-map
+
