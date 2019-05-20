@@ -54,4 +54,20 @@ options: {
 
 - 打包字体文件 eot ttf woff svg 等，需要用到file-loader
 
-- 
+- htmlWebpackPlugin 会在打包结束后，自动生成一个html文件，并把打包生成的js自动引入到这个html文件当中。
+    - plugin 可以在webpack运行到某一时刻的时候，帮我们做一些事情。
+    - 比如说自动在dist文件夹生成html文件，且使用index.html模板
+    - npm clean-webpack-plugin -D
+    - 
+
+```javascript
+plugins: [
+    // 打包之后运行
+    new HtmlWebpackPlugin({
+        template: 'src/index.html'
+    }), 
+    // 打包之前运行 删除dist文件夹
+    new CleanWebpackPlugin(['dist']),
+    new webpack.HotModuleReplacementPlugin()
+],
+```
