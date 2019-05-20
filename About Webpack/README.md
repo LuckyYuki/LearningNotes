@@ -26,3 +26,32 @@
 - chunks就是代码块的意思，有name的chunk是在entry里配置了name的，那些1，2，3，4啥的应该是用了code splitting配置生成的，数字是chunk的id
 
 - 多个chunk合在一起就是bundle，一个bundle可以理解为一个大的js打包之后生成的文件，而多个bundle里可能有公共的部分，或者一个bundle里的东西并不需要一次性加载，需要按照路由按需加载，这个时候就需要按需加载，拆分成不同的chunk
+
+- file-loader 和 url-loader 打包静太文件的区别：后者可以指定 limit 的options ，是否可以将图片打包成base64到js文件中。
+
+- 打包css样式文件的时候，需要 style-loader 和 css-loader，后者会分析css文件之间的引用关系，前者将css-loader处理过的css文件挂载到index.html文件的head标签下的style中。
+
+- scss文件的打包需安装：sass-loader 和node-sass.loader，loader执行顺序：从下到上，从右到左的顺序
+
+- css浏览器前缀loader: postcss-loader,且需要配置 postcss.config.js 文件。安装autoprefixer插件
+
+```javascript
+module.exports = {
+    plugins: [
+        require('autoprefixer')
+    ]
+}
+```
+
+- css modules 模块化css打包需要配置 css-loader 中的options：importLoaders指的是在scss文件当中可以使用@import 样式文件，然后依次用postcss-loader -> sass-loader -> css-loader -> style-loader
+
+```javascript
+options: {
+    importLoaders: 2,
+    modules: true
+}
+```
+
+- 打包字体文件 eot ttf woff svg 等，需要用到file-loader
+
+- 
