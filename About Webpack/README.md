@@ -71,3 +71,14 @@ plugins: [
     new webpack.HotModuleReplacementPlugin()
 ],
 ```
+
+- output 选项配置：
+    - 举例：当后台需要index.html文件作为入口文件时，打包生成的js文件要上传到cdn上，这时需要 HtmlWebpackPlugin 做的是：插入打包后的js文件时，加个cdn的域名，如下配置：
+
+```javascript
+output: {
+    publicPath: 'http://cdn.com.cn',
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist')
+}
+```
