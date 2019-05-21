@@ -18,7 +18,7 @@ npm install @babel/preset-env --save-dev
 // @babel/preset-env 只能转换一部分es6 代码的语法  @babel/polyfill 会将promise map 等这一些低版本浏览器缺失的对象或者函数  补充进去
 npm install --save @babel/polyfill
 
-// 在业务代码中 可引入  不过这样是全量引入
+// 在业务代码中 可引入  不过这样是全量引入，不过配置了 useBuiltIns: 'usage' 就可以省略以下一行import
 import "@babel/polyfill";
 // 可以不用这样  只需要配置下 @babel/preset-env 参数就可以
 
