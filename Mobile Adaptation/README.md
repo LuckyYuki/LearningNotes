@@ -598,8 +598,10 @@ window.addEventListener("resize", ()=>{
 
 使用 img标签的 srcset属性，浏览器会自动根据像素密度匹配最佳显示图片：
 
+```javascript
 <img src="conardLi_1x.png"
      srcset=" conardLi_2x.png 2x, conardLi_3x.png 3x">
+```
 
 ### 9.6 JavaScript拼接图片url
 
@@ -619,6 +621,7 @@ SVG的全称是可缩放矢量图（ ScalableVectorGraphics）。不同于位图
 除了我们手动在代码中绘制 svg，我们还可以像使用位图一样使用 svg图片.
 
 参考
+
 https://99designs.com/blog/tips/ppi-vs-dpi-whats-the-difference/
 
 https://www.w3cplus.com/css/vw-for-layout.html
