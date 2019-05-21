@@ -32,7 +32,7 @@
 
 - 多个 chunk 合在一起就是 bundle，一个 bundle 可以理解为一个大的 js 打包之后生成的文件，而多个 bundle 里可能有公共的部分，或者一个 bundle 里的东西并不需要一次性加载，需要按照路由按需加载，这个时候就需要按需加载，拆分成不同的 chunk
 
-- file-loader 和 url-loader 打包静太文件的区别：后者可以指定 limit 的 options ，是否可以将图片打包成 base64 到 js 文件中。
+- file-loader 和 url-loader(可以将文件拷贝到 dist 目录下 并返回文件的地址) 打包静太文件的区别：后者可以指定 limit 的 options ，是否可以将图片打包成 base64 到 js 文件中。
 
 - 打包 css 样式文件的时候，需要 style-loader 和 css-loader，后者会分析 css 文件之间的引用关系，前者将 css-loader 处理过的 css 文件挂载到 index.html 文件的 head 标签下的 style 中。
 
