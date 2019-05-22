@@ -75,26 +75,39 @@ module.exports = {
   // 默认配置
   optimization: {
     splitChunks: {
+        // 只对异步代码有效  如果同步的有效 改成chunks: 'all', 或者initial （同步） 还需要配置cacheGroups 下的 vendors 下的test
       chunks: 'async',
+    //   字节数  小于30000  就不 做代码分割  一般30KB 就可以了
       minSize: 30000,
       maxSize: 0,
+      // 当一个模块用了至少多少次的时候 才进行代码分割
       minChunks: 1,
+      // 同时加载的模块 5个   一般不用改
       maxAsyncRequests: 5,
+      // 入口文件 如果引入超过3个库  最多也分割成3个js  一般不用改
       maxInitialRequests: 3,
+      // 文件连接符
       automaticNameDelimiter: '~',
+      // 让以下的 filename 有效
       name: true,
       // 更改默认配置以下的vendors default  这样就是lodash名字了  /* webpackChunkName:"lodash" */
+      //  cacheGroups
       cacheGroups: {
         vendors: false,
         default: false
         // vendors: {
         //   test: /[\\/]node_modules[\\/]/,
+            // 指定 名称
+        //   filename: 'vendors.js',
+            // 打包的优先级 比较高
         //   priority: -10
         // },
         // default: {
         //   minChunks: 2,
         //   priority: -20,
-        //   reuseExistingChunk: true
+            // 复用已经打包过的模块
+        //   reuseExistingChunk: true,
+        //   filename: 'common.js',
         // }
       }
     }
