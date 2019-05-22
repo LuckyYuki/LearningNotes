@@ -158,3 +158,64 @@ plugins: [
   new webpack.HotModuleReplacementPlugin()
 ];
 ```
+
+- 开发与线上
+
+```javascript
+"scripts": {
+    "dev": "webpack-dev-server --config ./build/webpack.dev.js",
+    "build": "webpack --config ./build/webpack.prod.js"
+  },
+```
+
+- 提取出开发环境与生产的共有代码，形成 webpack.common.js 这样的话 pro 和 dev 的 config 文件都要合并下 common 的代码，所以首先安装
+  - npm i webpack-merge -D
+  - const merge = require('webpack-merge')
+
+```javascript
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const commonConfig = require("./webpack.common.js");
+
+const devConfig = {
+  mode: "development",
+  devtool: "cheap-module-eval-source-map",
+  devServer: {
+    contentBase: "./dist",
+    open: true,
+    port: 8080,
+    hot: true
+  },
+  plugins: [new webpack.HotModuleReplacementPlugin()],
+  optimization: {
+    usedExports: true
+  }
+};
+
+module.exports = merge(commonConfig, devConfig);
+```
+
+```javascript
+const merge = require("webpack-merge");
+const commonConfig = require("./webpack.common.js");
+
+const prodConfig = {
+  mode: "production",
+  devtool: "cheap-module-source-map"
+};
+
+module.exports = merge(commonConfig, prodConfig);
+```
+
+- CleanWebpackPlugin 清除 dist 目录要注意根路径
+
+```javascript
+plugins: [
+  new HtmlWebpackPlugin({
+    template: "src/index.html"
+  }),
+  new CleanWebpackPlugin(["dist"], {
+    root: path.resolve(__dirname, "../")
+  })
+];
+```
