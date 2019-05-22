@@ -131,3 +131,15 @@ module.exports = {
 }
 
 ```
+
+- 区别：filename chunkFilename
+
+```javascript
+output: {
+  // 入口文件打包 走第一个
+    filename: '[name].js',
+  // 被入口文件 异步加载的间接js 文件 就会走第二个
+		chunkFilename: '[name].chunk.js',
+		path: path.resolve(__dirname, '../dist')
+	}
+```
