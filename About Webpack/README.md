@@ -219,3 +219,22 @@ plugins: [
   })
 ];
 ```
+
+- 环境变量的使用
+
+```javascript
+"scripts": {
+    "dev-build": "webpack --config ./build/webpack.common.js",
+    "dev": "webpack-dev-server --config ./build/webpack.common.js",
+    // --env.production 默认为true
+    "build": "webpack --env.production --config ./build/webpack.common.js"
+  },
+
+module.exports = (env) => {
+	if(env && env.production) {
+		return merge(commonConfig, prodConfig);
+	}else {
+		return merge(commonConfig, devConfig);
+	}
+}
+```
